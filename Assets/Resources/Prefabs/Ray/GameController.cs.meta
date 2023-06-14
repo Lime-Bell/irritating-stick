@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: f5b999529e4c5e345ac2b08640dc6872
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - startObject: {instanceID: 0}
+  - trackObject: {instanceID: 0}
+  - goalObject: {instanceID: 0}
+  - gameOverText: {instanceID: 0}
+  - clearText: {instanceID: 0}
+  - startButton: {instanceID: 0}
+  - retryButton: {instanceID: 0}
+  - nextButton: {instanceID: 0}
+  - exitButton: {instanceID: 0}
+  - playerLine: {instanceID: 0}
+  - goal: {instanceID: 0}
+  - mask: {fileID: 3368645756352442081, guid: fe723869da39e6f47b348fb5fbb96007, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
