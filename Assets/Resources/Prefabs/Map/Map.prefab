@@ -44,8 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0617eee3c8d7b744bed0fdccb917cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartCube: {fileID: 4993696974964053809, guid: 0a98d70b3ec7e4442b904536d07c9cb6, type: 3}
-  GoalCube: {fileID: 4993696974964053809, guid: 39e8f74a667918844be02e501d115f6f, type: 3}
   Cube: {fileID: 5514584633246787995, guid: 767ce92841911ac41baff74c384aad8b, type: 3}
   go: {fileID: 8016727569497649384}
   length: 12

@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 
 public class CameraMovement : MonoBehaviour
 {
+    public static CameraMovement _instance;
+
     private Move cameraActions;
     private InputAction movement;
     private Transform cameraTransform;
@@ -20,90 +22,66 @@ public class CameraMovement : MonoBehaviour
     private float damping = 15f;
 
     [SerializeField]
-    private float stepSize = 2f;
+    private float zoomSpeed = 200f;
 
-    [SerializeField]
-    private float zoomDampening = 7.5f;
-
-    [SerializeField]
-    private float minHeight = 5f;
-
-    [SerializeField]
-    private float maxHeight = 50f;
-
-    [SerializeField]
-    private float zoomSpeed = 10f;
-
-
-    [SerializeField]
-    private float maxRotationSpeed = 1f;
-
-    [SerializeField]
-    [Range(0f, 0.1f)]
-    private float edgeTolerance = 0.05f;
-
-    //value set in various functions 
-    //used to update the position of the camera base object.
+    // 基於上次的位置更新相機位置
     private Vector3 targetPosition;
 
-    private float zoomHeight;
 
-    //used to track and maintain velocity w/o a rigidbody
+    // 追蹤和維持速度
     private Vector3 horizontalVelocity;
     private Vector3 lastPosition;
 
-    //tracks where the dragging action started
-    Vector3 startDrag;
+    // 儲存光源
+    private Light[] lights;
+
 
     private void Awake()
     {
+        _instance = this;
+
         cameraActions = new Move();
         cameraTransform = this.GetComponentInChildren<Camera>().transform;
+
+        lights = FindObjectsOfType<Light>();
     }
 
     private void OnEnable()
     {
-        zoomHeight = cameraTransform.localPosition.z;
         cameraTransform.LookAt(this.transform);
 
         lastPosition = this.transform.position;
 
         movement = cameraActions.Camera.Movement;
-        
-        //cameraActions.Camera.Rotate.performed += RotateCamera;
-        //cameraActions.Camera.Zoom.performed += ZoomCamera;
+
         cameraActions.Camera.Enable();
 
     }
 
     private void OnDisable()
     {
-        //cameraActions.Camera.Rotate.performed -= RotateCamera;
-        //cameraActions.Camera.Zoom.performed -= ZoomCamera;
         cameraActions.Camera.Disable();
     }
 
     private void Update()
     {
-        //inputs
-        GetKeyboardMovement();
-        ZoomCamera();
-        //CheckMouseAtScreenEdge();
-        //DragCamera();
+        if (Data.moveCamera) 
+        {
+            GetKeyboardMovement();
+            ZoomCamera();
+            UpdateBasePosition();
+        }
+        if (Data.resetCamera)
+        {
+            Data.resetCamera = false;
 
-        //move base and camera objects
-        //UpdateVelocity();
-        UpdateBasePosition();
-        //UpdateCameraPosition();
+            transform.position = new Vector3(0, 0, -12);
+            
+        }
     }
 
-    private void UpdateVelocity()
-    {
-        horizontalVelocity = (this.transform.position - lastPosition) / Time.deltaTime;
-        horizontalVelocity.y = 0f;
-        lastPosition = this.transform.position;
-    }
 
+    // 讀取鍵盤WASD移動視角
     private void GetKeyboardMovement()
     {
         Vector3 inputValue = movement.ReadValue<Vector2>().x * GetCameraRight()
@@ -115,109 +93,69 @@ public class CameraMovement : MonoBehaviour
             targetPosition += inputValue;
     }
 
-    //private void DragCamera()
-    //{
-    //    if (!Mouse.current.rightButton.isPressed)
-    //        return;
-
-    //    //create plane to raycast to
-    //    Plane plane = new Plane(Vector3.up, Vector3.zero);
-    //    Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-    //    if (plane.Raycast(ray, out float distance))
-    //    {
-    //        if (Mouse.current.rightButton.wasPressedThisFrame)
-    //            startDrag = ray.GetPoint(distance);
-    //        else
-    //            targetPosition += startDrag - ray.GetPoint(distance);
-    //    }
-    //}
-
-    //// 滑鼠碰到螢幕邊緣時捲動
-    //private void CheckMouseAtScreenEdge()
-    //{
-    //    //mouse position is in pixels
-    //    Vector2 mousePosition = Mouse.current.position.ReadValue();
-    //    Vector3 moveDirection = Vector3.zero;
-
-    //    //horizontal scrolling
-    //    if (mousePosition.x < edgeTolerance * Screen.width)
-    //        moveDirection += -GetCameraRight();
-    //    else if (mousePosition.x > (1f - edgeTolerance) * Screen.width)
-    //        moveDirection += GetCameraRight();
-
-    //    //vertical scrolling
-    //    if (mousePosition.y < edgeTolerance * Screen.height)
-    //        moveDirection += -GetCameraUp();
-    //    else if (mousePosition.y > (1f - edgeTolerance) * Screen.height)
-    //        moveDirection += GetCameraUp();
-
-    //    targetPosition += moveDirection;
-    //}
-
+    // 更新視角位置
     private void UpdateBasePosition()
     {
         if (targetPosition.sqrMagnitude > 0.1f)
         {
-            //create a ramp up or acceleration
             speed = Mathf.Lerp(speed, maxSpeed, Time.deltaTime * acceleration);
             transform.position += targetPosition * speed * Time.deltaTime;
         }
         else
         {
-            //create smooth slow down
             horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, Time.deltaTime * damping);
             transform.position += horizontalVelocity * Time.deltaTime;
         }
 
-        //reset for next frame
         targetPosition = Vector3.zero;
+
+        // 更新光源的位置
+
+        float distance = 30f; // 光源與相機的距離，可以根據需求調整
+        float forwardOffset = 12f; // 向前的偏移量，依相機至軌道距離調整
+
+        for (int i = 0; i < lights.Length; i++)
+        {
+            Vector3 lightPositionOffset = GetLightPositionOffset(i);
+            Vector3 newLightPosition = transform.position + lightPositionOffset.normalized * distance + cameraTransform.forward * forwardOffset;
+            lights[i].transform.position = newLightPosition;
+        }
     }
 
+    private Vector3 GetLightPositionOffset(int index)
+    {
+        // 根據索引返回光源對應的偏移量
+        switch (index)
+        {
+            case 0:
+                return cameraTransform.forward * -1f + cameraTransform.up + cameraTransform.right;
+            case 1:
+                return cameraTransform.forward * -1f + cameraTransform.up * -1f + cameraTransform.right;
+            case 2:
+                return cameraTransform.forward * -1f + cameraTransform.up + cameraTransform.right * -1f;
+            case 3:
+                return cameraTransform.forward * -1f + cameraTransform.up * -1f + cameraTransform.right * -1f;
+            default:
+                return Vector3.zero;
+        }
+    }
+
+    // 滾輪放大縮小畫面
     private void ZoomCamera()
     {
         Vector3 inputValue = cameraActions.Camera.Zoom.ReadValue<Vector2>().y * GetCameraForward() / 40f;
 
+        inputValue = inputValue.normalized;
 
-        while (inputValue.sqrMagnitude > 0.1f)
+        if (inputValue.sqrMagnitude > 0.1f)
         {
-            targetPosition += inputValue;
-            inputValue.z /= 1.05f;
-            //zoomValue -= 0.02f;
 
-            //Debug.Log(inputValue);
+            targetPosition += inputValue * zoomSpeed;
         }
-
-
-        //if (inputValue.sqrMagnitude > 0.1f)
-        //{
-        //    targetPosition += inputValue;
-        //    //Debug.Log("Scroll" + inputValue);
-        //}
-
     }
 
-    private void UpdateCameraPosition()
-    {
-        //set zoom target
-        Vector3 zoomTarget = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y, zoomHeight);
-        //add vector for forward/backward zoom
-        zoomTarget -= zoomSpeed * (zoomHeight - cameraTransform.localPosition.z) * Vector3.forward;
 
-        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, zoomTarget, Time.deltaTime * zoomDampening);
-        cameraTransform.LookAt(this.transform);
-    }
-
-    private void RotateCamera(InputAction.CallbackContext obj)
-    {
-        if (!Mouse.current.middleButton.isPressed)
-            return;
-
-        float inputValue = obj.ReadValue<Vector2>().x;
-        transform.rotation = Quaternion.Euler(0f, inputValue * maxRotationSpeed + transform.rotation.eulerAngles.y, 0f);
-    }
-
-    //gets the horizontal forward vector of the camera
+    // 相機視角上下移動
     private Vector3 GetCameraUp()
     {
         Vector3 up = cameraTransform.up;
@@ -225,7 +163,7 @@ public class CameraMovement : MonoBehaviour
         return up;
     }
 
-    //gets the horizontal right vector of the camera
+    // 相機視角左右移動
     private Vector3 GetCameraRight()
     {
         Vector3 right = cameraTransform.right;
@@ -233,10 +171,12 @@ public class CameraMovement : MonoBehaviour
         return right;
     }
 
+    // 相機視角前後移動
     private Vector3 GetCameraForward()
     {
         Vector3 forward = cameraTransform.forward;
         forward.x = 0f;
         return forward;
     }
+
 }

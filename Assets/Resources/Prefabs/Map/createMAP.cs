@@ -11,16 +11,29 @@ public class createMAP : MonoBehaviour
     public GameObject Cube; 
     public GameObject go;   //生成在哪個GameObject下面
     public int length;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        Create();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Data.createMap)
+        {
+            Data.createMap = false;
+            Create();
+
+        }
+        if (Data.detroyMap)
+        {
+            Data.detroyMap = false;
+
+            DestroyMAP();
+            
+        }
     }
 
     public void Create()
@@ -29,6 +42,8 @@ public class createMAP : MonoBehaviour
         int p = length / 5;//代表多久轉一次彎，5可以換其他數字
         float a = 0, b = 0, c = 0;
         int Case = 0;
+        bool endPoint = false;
+
 
         for (int i = 0; i < length; i++)
         {
@@ -39,8 +54,9 @@ public class createMAP : MonoBehaviour
             else if (i == length - 1)
             {
                 Cube = Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject;
+                endPoint = true;
             }
-  
+
             else if (i > 0 && i < length - 1)
             {
                 Cube = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
@@ -84,6 +100,12 @@ public class createMAP : MonoBehaviour
             }
             Cube.transform.position = new Vector3(x + a, y + b, z + c);
 
+            if (endPoint == true)
+            {
+                endPoint = false;
+                Data.endPoint = Cube.transform.position;
+            }
+
             x = Cube.GetComponent<Transform>().position.x;
             y = Cube.GetComponent<Transform>().position.y;
             z = Cube.GetComponent<Transform>().position.z;
@@ -92,7 +114,9 @@ public class createMAP : MonoBehaviour
 
     public void DestroyMAP()
     {
-        //for(int i=0;i<length;i++)
-        Destroy(Cube);
+        for (int i = 0; i < length; i++)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
     }
 }

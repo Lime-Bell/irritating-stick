@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4874887917087226856}
   - component: {fileID: 633084392799245845}
   - component: {fileID: 5934984918738661454}
-  - component: {fileID: 8460119808802903714}
+  - component: {fileID: 6554880605315038200}
   m_Layer: 0
   m_Name: TrackCube
   m_TagString: Untagged
@@ -84,7 +84,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8460119808802903714
+--- !u!65 &6554880605315038200
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

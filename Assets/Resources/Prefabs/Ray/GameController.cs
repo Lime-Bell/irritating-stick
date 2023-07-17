@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -11,33 +10,23 @@ public class GameController : MonoBehaviour
     public GameObject trackObject;
     public GameObject goalObject;
 
-    //public GameObject gameOverPanel;
-    //public GameObject clearPanel;
-    //public Button retryButton;
-    //public Button nextButton;
-    //public Button exitButton;
-
-    //public GameObject mask;
-    public GameObject gameOverText;
-    public GameObject clearText;
-
-    public GameObject startButton;
-    public GameObject retryButton;
-    public GameObject nextButton;
-    public GameObject exitButton;
-    public GameObject playerLine;
-    public GameObject goal;
-
+    public Text gameOverText;
     public RawImage mask;
 
-    private LineRenderer lineRenderer;
+    public LineRenderer lineRenderer;
 
-    private bool gameStarted = false;
-    private bool gameOver = false;
-    private bool gameClear = false;
+    public float toleranceTime;
+    private float edgeTime = 0;
+    private float endTime = 0;
+    private bool touchEdge = false;
+    //private MeshCollider meshCollider;
 
     private Camera mainCamera;
-    private Vector3 lastMousePosition;
+
+    private float distanceThreshold = 0.2f;
+
+    private bool lose = false;
+    private bool inmap = true;
 
     private void Start()
     {
@@ -45,67 +34,42 @@ public class GameController : MonoBehaviour
         lineRenderer.positionCount = 2;
         lineRenderer.enabled = false;
 
+        //lineRenderer.gameObject.SetActive(false);
+
         mainCamera = Camera.main;
-
-        gameStarted = false;
-
-        //retryButton.onClick.AddListener(Retry);
-        //nextButton.onClick.AddListener(Next);
-        //exitButton.onClick.AddListener(Exit);
-
-        //mask.gameObject.SetActive(true);
-        //mask.color = Color.black;
-        //startButton.SetActive(true);
-
-        //gameOverText.SetActive(false);
-        //clearText.SetActive(false);
-        //retryButton.SetActive(false);
-        //nextButton.SetActive(false);
-        //exitButton.SetActive(false);
-
-        //playerLine.SetActive(false);
-        //goal.SetActive(false);
 
         StartGame();
     }
 
     private void Update()
     {
-        if (gameStarted && !gameOver && !gameClear)
+        if (Data.moveRay)
         {
-            // 控制射線的移動，根據滑鼠位置或其他輸入方式來更新射線的位置
+            // 控制射線的移動，根據滑鼠位置來更新射線的位置
             UpdateLinePosition();
 
-            // 檢查射線是否碰觸到軌道邊緣，根據情況執行相應的操作
-            CheckTrackCollision();
+            lineRenderer.enabled = true;
         }
+        else
+        {
+
+            lineRenderer.enabled = false;
+        }
+
     }
 
     private void StartGame()
     {
-        
-
         lineRenderer.SetPosition(0, new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y - 2, mainCamera.transform.position.z));
         lineRenderer.SetPosition(1, startObject.transform.position);
         lineRenderer.enabled = true;
-
-
-
-        // 啟動倒數計時
-        StartCoroutine(Countdown());
     }
 
-    private System.Collections.IEnumerator Countdown()
-    {
+    
 
-        yield return new WaitForSeconds(3f);
-
-        gameStarted = true;
-    }
-
+    // 根據滑鼠位置更新射線的位置
     private void UpdateLinePosition()
     {
-        // 根據滑鼠位置更新射線的位置
         Vector3 mousePosition = Input.mousePosition;
         Vector3 rayOriginPosition = new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y - 2, mainCamera.transform.position.z);
 
@@ -116,57 +80,69 @@ public class GameController : MonoBehaviour
         {
             lineRenderer.SetPosition(0, rayOriginPosition);
             lineRenderer.SetPosition(1, hit.point);
+            touchEdge = false;
+
+            //Debug.Log(hit.point);
+
+            if (Data.endPoint.x - 0.7f < hit.point.x && Data.endPoint.x + 0.7f > hit.point.x
+                && Data.endPoint.y - 0.7f < hit.point.y && Data.endPoint.y + 0.7f > hit.point.y
+                && Data.endPoint.z - 0.7f < hit.point.z && Data.endPoint.z + 0.7f > hit.point.z)
+            {
+                endTime += Time.deltaTime;
+            }
+            //StopCoroutine(GameOverCountdown());
         }
+        else
+        {
+            touchEdge = true;
+
+            //StartCoroutine(GameOverCountdown());
+            Vector3 targetPosition = ray.origin + ray.direction * 100f;
+            lineRenderer.SetPosition(0, rayOriginPosition);
+            lineRenderer.SetPosition(1, targetPosition);
+        }
+
+        if (touchEdge)
+        {
+            edgeTime += Time.deltaTime;
+        }
+
+        if (endTime >= 1f)
+        {
+            endTime = 0f;
+            Debug.Log("GameClear");
+            GameClear();
+        }
+
+        if (edgeTime >= toleranceTime)
+        {
+            edgeTime = 0;
+            Debug.Log("GameOver");
+            GameOver();
+        }
+        else if (!touchEdge)
+        {
+            edgeTime = 0;
+        }
+
+        //Debug.Log("超出邊界 " + edgeTime + " 秒!");
+
     }
 
-    private void CheckTrackCollision()
+    private void GameOver()
     {
-        // 檢查射線是否碰觸到軌道邊緣
-        Vector3 linePosition = lineRenderer.GetPosition(1);
-        Vector3 trackPosition = trackObject.transform.position;
+        Data.showEndGame = true;
+        Data.moveRay = false;
+        Data.moveCamera = false;
+        Data.showEndText = "GameOver";
 
-        float distanceToTrack = Vector3.Distance(linePosition, trackPosition);
-        //float trackRadius = trackObject.transform.localScale.x / 2f; // 假設軌道為球形，取軌道的X軸尺寸作為半徑
-
-        //if (distanceToTrack > trackRadius)
-        //{
-        //    // 射線偏離軌道邊緣，執行遊戲失敗的操作
-        //    //GameOver();
-        //}
-        //else if (Vector3.Distance(linePosition, goalObject.transform.position) < trackRadius)
-        //{
-        //    // 射線碰觸到終點，執行遊戲通過的操作
-        //    //GameClear();
-        //}
     }
 
-
-    //private void GameOver()
-    //{
-    //    gameOverPanel.SetActive(true);
-    //    gameOver = true;
-    //}
-
-    //private void GameClear()
-    //{
-    //    clearPanel.SetActive(true);
-    //    gameClear = true;
-    //}
-
-    //private void Retry()
-    //{
-    //    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    //}
-
-    //private void Next()
-    //{
-    //    // 加載下一關的場景
-    //    // SceneManager.LoadScene("NextLevel");
-    //}
-
-    //private void Exit()
-    //{
-    //    // 關閉應用程式或返回主選單等操作
-    //    // Application.Quit();
-    //}
+    private void GameClear()
+    {
+        Data.showEndGame = true;
+        Data.moveRay = false;
+        Data.moveCamera = false;
+        Data.showEndText = "GameClear";
+    }
 }
