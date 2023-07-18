@@ -7,15 +7,24 @@ using UnityEngine.UI;
 public class createMAP : MonoBehaviour
 {
     //public GameObject StartCube;
-
-    public GameObject Cube; 
+    public static createMAP self;
+    public GameObject[] Cube; 
     public GameObject go;   //生成在哪個GameObject下面
     public int length;
+    public int turn_num = 5;
 
-
+    private void Awake()
+    {
+        if (self == null)
+        {
+            self = this;
+            DontDestroyOnLoad(this);
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
+        length = Cube.Length;
     }
 
     // Update is called once per frame
@@ -39,7 +48,7 @@ public class createMAP : MonoBehaviour
     public void Create()
     {
         float x = 0, y = 0, z = 0;
-        int p = length / 5;//代表多久轉一次彎，5可以換其他數字
+        int p = length / turn_num;//代表多久轉一次彎，5可以換其他數字
         float a = 0, b = 0, c = 0;
         int Case = 0;
         bool endPoint = false;
@@ -49,17 +58,17 @@ public class createMAP : MonoBehaviour
         {
             if (i == 0)
             {
-                Cube = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
+                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
             }
             else if (i == length - 1)
             {
-                Cube = Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject;
+                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject;
                 endPoint = true;
             }
 
             else if (i > 0 && i < length - 1)
             {
-                Cube = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
+                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
 
                 int precase = Case;
                 if (i % p == 0) Case = Random.Range(0, 5);
@@ -98,17 +107,33 @@ public class createMAP : MonoBehaviour
                 }
                 //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
             }
-            Cube.transform.position = new Vector3(x + a, y + b, z + c);
-
+            Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
+            if (i % p == p - 1)
+            {
+                for (int j = p - 1; j < i; j += p)
+                {
+                    if (Cube[i].transform.position == Cube[j].transform.position)
+                    {
+                        float i_1_x = Cube[i - 2].GetComponent<Transform>().position.x + 1;
+                        float i_1_y = Cube[i - 2].GetComponent<Transform>().position.y;
+                        float i_1_z = Cube[i - 2].GetComponent<Transform>().position.z;
+                        Cube[i - 1].transform.position = new Vector3(i_1_x, i_1_y, i_1_z);
+                        float i_x = Cube[i - 1].GetComponent<Transform>().position.x + 1;
+                        float i_y = Cube[i - 1].GetComponent<Transform>().position.y;
+                        float i_z = Cube[i - 1].GetComponent<Transform>().position.z;
+                        Cube[i].transform.position = new Vector3(i_x, i_y, i_z);
+                    }
+                }
+            }
             if (endPoint == true)
             {
                 endPoint = false;
-                Data.endPoint = Cube.transform.position;
+                Data.endPoint = Cube[i].transform.position;
             }
 
-            x = Cube.GetComponent<Transform>().position.x;
-            y = Cube.GetComponent<Transform>().position.y;
-            z = Cube.GetComponent<Transform>().position.z;
+            x = Cube[i].GetComponent<Transform>().position.x;
+            y = Cube[i].GetComponent<Transform>().position.y;
+            z = Cube[i].GetComponent<Transform>().position.z;
         }
     }
 
