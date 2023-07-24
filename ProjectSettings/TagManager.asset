@@ -7,15 +7,16 @@ TagManager:
   - MAP
   - START
   - BALL
+  - WALL
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - ball
   - Water
   - UI
-  - 
-  - 
+  - cube
+  - wall
   - 
   - 
   - 

@@ -54,7 +54,9 @@ public class UI : MonoBehaviour
     {
        if (GameController.self.start)
         {
-            CountDownToStart();
+            countdownText.gameObject.SetActive(true);
+            StartCoroutine(ReadyCountdown());
+            GameController.self.startfall = false;
         }
         if (Data.showEndGame)
         {
@@ -120,11 +122,7 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
     }
 
-    public void CountDownToStart()
-    {
-        countdownText.gameObject.SetActive(true);
-        StartCoroutine(ReadyCountdown());
-    }
+    
     public void StartButton()
     {
         Data.createMap = true;
@@ -174,7 +172,7 @@ public class UI : MonoBehaviour
 
     private IEnumerator ReadyCountdown()
     {
-        float duration = 3f;
+        float duration = 4f;
         float elapsedTime = 0f;
         float startAlpha = 0f;
         float midAlpha = 1f;
@@ -186,11 +184,30 @@ public class UI : MonoBehaviour
         
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            //elapsedTime += Time.deltaTime;
 
-            int countdownNumber = Mathf.CeilToInt(duration - elapsedTime);
+            if (GameController.self.startfall)
+            {
+                countdownText.gameObject.SetActive(false);
+                elapsedTime =0f;
+                
+            }
+            else
+            {
+                elapsedTime += Time.deltaTime;
+            }
+            int countdownNumber = Mathf.CeilToInt(duration - elapsedTime) - 1;
             countdownText.text = countdownNumber.ToString();
 
+            if (countdownNumber == 0)
+            {
+                countdownText.text = "GO!!";
+                Data.moveRay = true;
+                Data.moveCamera = true;
+                
+            }
+            
+            
             float t = elapsedTime - Mathf.FloorToInt(elapsedTime) / 1;
             
 
@@ -217,11 +234,11 @@ public class UI : MonoBehaviour
 
         countdownText.gameObject.SetActive(false);
         maskImage.gameObject.SetActive(false);
-        Data.moveRay = true;
-        Data.moveCamera = true;
+        GameController.self.playing = true;
+
         /*GameController.self.playing = true;
         GameController.self.start = false;*/
-        
+
 
     }
 }

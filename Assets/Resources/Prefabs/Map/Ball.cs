@@ -14,19 +14,33 @@ public class Ball : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (test < nowon + 1 && test < createMAP.self.length)
+        if (!GameController.self.playing)
         {
-            goahead();
-            test++;
-            Invoke("nowup", speed);
+            ball.transform.position = go.transform.GetComponent<Transform>().position;
+            nowon = 0;
+            test = 0;
         }
+        if (GameController.self.playing)
+        {
+            if (test < nowon + 1 && test < createMAP.self.length && GameController.self.moveball)
+            {
+                goahead();
+                test++;
+                Invoke("nowup", speed);
+            }
+            else if(!GameController.self.moveball)
+            {
+                Debug.Log("STOP BALL MOVE");
+            }
+        }
+        
     }
 
     void goahead()

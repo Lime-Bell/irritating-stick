@@ -12,6 +12,7 @@ public class createMAP : MonoBehaviour
     public GameObject go;   //生成在哪個GameObject下面
     public int length;
     public int turn_num = 5;
+    public GameObject ball;
 
     private void Awake()
     {
@@ -34,6 +35,7 @@ public class createMAP : MonoBehaviour
         {
             Data.createMap = false;
             Create();
+            ball.SetActive(true);
 
         }
         if (Data.detroyMap)
@@ -41,7 +43,8 @@ public class createMAP : MonoBehaviour
             Data.detroyMap = false;
 
             DestroyMAP();
-            
+            ball.SetActive(false);
+
         }
     }
 

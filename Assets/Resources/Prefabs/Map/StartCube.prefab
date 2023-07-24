@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4495262899858474129}
   - component: {fileID: -6980979341251634153}
   - component: {fileID: 8479389052589163952}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StartCube
   m_TagString: START
   m_Icon: {fileID: 0}
