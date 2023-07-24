@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MAP
   - START
+  - BALL
   layers:
   - Default
   - TransparentFX

@@ -77,6 +77,8 @@ public class UI : MonoBehaviour
         //Data.showNextButton = false;
         Data.showEndGame = false;
         Data.resetCamera = true;
+        Data.moveRay = true;
+        Data.moveCamera = true;
 
         closeUI();
 
@@ -90,6 +92,8 @@ public class UI : MonoBehaviour
     public void NextButton()
     {
         //Data.showNextButton = false;
+        Data.moveRay = true;
+        Data.moveCamera = true;
         Data.showEndGame = false;
 
         Data.detroyMap = true;
@@ -125,6 +129,7 @@ public class UI : MonoBehaviour
     {
         Data.createMap = true;
         Data.moveRay = true;
+        Data.moveCamera = true;
 
         startButton.gameObject.SetActive(false);
         //countdownText.gameObject.SetActive(true);
@@ -178,6 +183,7 @@ public class UI : MonoBehaviour
 
         float midPoint = duration / 2f;
 
+        
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
@@ -186,10 +192,10 @@ public class UI : MonoBehaviour
             countdownText.text = countdownNumber.ToString();
 
             float t = elapsedTime - Mathf.FloorToInt(elapsedTime) / 1;
-
             
 
             int group = ((int)(elapsedTime / 0.25)) % 4;
+      
 
             if (group == 0 || group == 1)
             {
@@ -213,6 +219,9 @@ public class UI : MonoBehaviour
         maskImage.gameObject.SetActive(false);
         Data.moveRay = true;
         Data.moveCamera = true;
+        /*GameController.self.playing = true;
+        GameController.self.start = false;*/
+        
 
     }
 }

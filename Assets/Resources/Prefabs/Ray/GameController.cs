@@ -174,5 +174,6 @@ public class GameController : MonoBehaviour
         Data.moveRay = false;
         Data.moveCamera = false;
         Data.showEndText = "GameClear";
+        playing = false;
     }
 }

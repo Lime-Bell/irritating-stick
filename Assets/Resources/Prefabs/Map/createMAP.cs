@@ -58,6 +58,7 @@ public class createMAP : MonoBehaviour
         {
             if (i == 0)
             {
+                Debug.Log(x+" "+ y +" " + z);
                 Cube[i] = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
             }
             else if (i == length - 1)
@@ -107,21 +108,21 @@ public class createMAP : MonoBehaviour
                 }
                 //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
             }
-            Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
+            Cube[i].transform.localPosition = new Vector3(x + a, y + b, z + c);
             if (i % p == p - 1)
             {
                 for (int j = p - 1; j < i; j += p)
                 {
                     if (Cube[i].transform.position == Cube[j].transform.position)
                     {
-                        float i_1_x = Cube[i - 2].GetComponent<Transform>().position.x + 1;
-                        float i_1_y = Cube[i - 2].GetComponent<Transform>().position.y;
-                        float i_1_z = Cube[i - 2].GetComponent<Transform>().position.z;
-                        Cube[i - 1].transform.position = new Vector3(i_1_x, i_1_y, i_1_z);
-                        float i_x = Cube[i - 1].GetComponent<Transform>().position.x + 1;
-                        float i_y = Cube[i - 1].GetComponent<Transform>().position.y;
-                        float i_z = Cube[i - 1].GetComponent<Transform>().position.z;
-                        Cube[i].transform.position = new Vector3(i_x, i_y, i_z);
+                        float i_1_x = Cube[i - 2].GetComponent<Transform>().localPosition.x + 1;
+                        float i_1_y = Cube[i - 2].GetComponent<Transform>().localPosition.y;
+                        float i_1_z = Cube[i - 2].GetComponent<Transform>().localPosition.z;
+                        Cube[i - 1].transform.localPosition = new Vector3(i_1_x, i_1_y, i_1_z);
+                        float i_x = Cube[i - 1].GetComponent<Transform>().localPosition.x + 1;
+                        float i_y = Cube[i - 1].GetComponent<Transform>().localPosition.y;
+                        float i_z = Cube[i - 1].GetComponent<Transform>().localPosition.z;
+                        Cube[i].transform.localPosition = new Vector3(i_x, i_y, i_z);
                     }
                 }
             }
@@ -131,9 +132,10 @@ public class createMAP : MonoBehaviour
                 Data.endPoint = Cube[i].transform.position;
             }
 
-            x = Cube[i].GetComponent<Transform>().position.x;
-            y = Cube[i].GetComponent<Transform>().position.y;
-            z = Cube[i].GetComponent<Transform>().position.z;
+            x = Cube[i].GetComponent<Transform>().localPosition.x;
+            y = Cube[i].GetComponent<Transform>().localPosition.y;
+            z = Cube[i].GetComponent<Transform>().localPosition.z;
+            Debug.Log(x + " " + y + " " + z);
         }
     }
 
