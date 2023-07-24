@@ -27,22 +27,39 @@ public class GameController : MonoBehaviour
 
     private bool lose = false;
     private bool inmap = true;
+    public bool start = false;
+    public bool playing = false;
+    public static GameController self;
+
+    private void Awake()
+    {
+        if (self == null)
+        {
+            self = this;
+            DontDestroyOnLoad(this);
+        }
+    }
 
     private void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
-        lineRenderer.enabled = false;
-
-        //lineRenderer.gameObject.SetActive(false);
+        lineRenderer.enabled = true;
+        lineRenderer.gameObject.SetActive(true);
 
         mainCamera = Camera.main;
 
-        StartGame();
+       
     }
 
     private void Update()
     {
+        
+        if(start == true)
+        {
+            StartGame();
+            start = false;
+        }
         if (Data.moveRay)
         {
             // 控制射線的移動，根據滑鼠位置來更新射線的位置
@@ -75,7 +92,14 @@ public class GameController : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit hit;
-
+        if (start == false && playing == false && Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.CompareTag("START"))
+            {
+                playing = true;
+                start = true;
+            }
+        }
         if (Physics.Raycast(ray, out hit))
         {
             lineRenderer.SetPosition(0, rayOriginPosition);
@@ -102,28 +126,34 @@ public class GameController : MonoBehaviour
             lineRenderer.SetPosition(1, targetPosition);
         }
 
-        if (touchEdge)
-        {
-            edgeTime += Time.deltaTime;
-        }
+        
 
-        if (endTime >= 1f)
+        if(playing == true)
         {
-            endTime = 0f;
-            Debug.Log("GameClear");
-            GameClear();
-        }
+            if (touchEdge)
+            {
+                edgeTime += Time.deltaTime;
+            }
+            if (endTime >= 1f)
+            {
+                endTime = 0f;
+                Debug.Log("GameClear");
+                GameClear();
+            }
 
-        if (edgeTime >= toleranceTime)
-        {
-            edgeTime = 0;
-            Debug.Log("GameOver");
-            GameOver();
+            if (edgeTime >= toleranceTime)
+            {
+                edgeTime = 0;
+                Debug.Log("GameOver");
+                GameOver();
+                playing = false;
+            }
+            else if (!touchEdge)
+            {
+                edgeTime = 0;
+            }
         }
-        else if (!touchEdge)
-        {
-            edgeTime = 0;
-        }
+        
 
         //Debug.Log("超出邊界 " + edgeTime + " 秒!");
 
@@ -131,11 +161,11 @@ public class GameController : MonoBehaviour
 
     private void GameOver()
     {
-        Data.showEndGame = true;
-        Data.moveRay = false;
-        Data.moveCamera = false;
-        Data.showEndText = "GameOver";
-
+            Data.showEndGame = true;
+            Data.moveRay = false;
+            Data.moveCamera = false;
+            Data.showEndText = "GameOver";
+            playing = false;
     }
 
     private void GameClear()

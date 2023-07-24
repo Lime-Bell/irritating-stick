@@ -52,6 +52,10 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+       if (GameController.self.start)
+        {
+            CountDownToStart();
+        }
         if (Data.showEndGame)
         {
             endGameText.text = Data.showEndText;
@@ -80,7 +84,7 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
 
 
-        StartCoroutine(ReadyCountdown());
+        //StartCoroutine(ReadyCountdown());
     }
 
     public void NextButton()
@@ -97,7 +101,7 @@ public class UI : MonoBehaviour
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
 
-        StartCoroutine(ReadyCountdown());
+        //StartCoroutine(ReadyCountdown());
 
     }
     public void ExitButton()
@@ -112,15 +116,20 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
     }
 
-
+    public void CountDownToStart()
+    {
+        countdownText.gameObject.SetActive(true);
+        StartCoroutine(ReadyCountdown());
+    }
     public void StartButton()
     {
         Data.createMap = true;
+        Data.moveRay = true;
 
         startButton.gameObject.SetActive(false);
-        countdownText.gameObject.SetActive(true);
+        //countdownText.gameObject.SetActive(true);
         
-        StartCoroutine(ReadyCountdown());
+        //StartCoroutine(ReadyCountdown());
         //SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
     }
 
