@@ -88,6 +88,7 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
 
 
+        
         //StartCoroutine(ReadyCountdown());
     }
 
@@ -107,6 +108,7 @@ public class UI : MonoBehaviour
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
 
+       
         //StartCoroutine(ReadyCountdown());
 
     }
@@ -199,13 +201,7 @@ public class UI : MonoBehaviour
             int countdownNumber = Mathf.CeilToInt(duration - elapsedTime) - 1;
             countdownText.text = countdownNumber.ToString();
 
-            if (countdownNumber == 0)
-            {
-                countdownText.text = "GO!!";
-                Data.moveRay = true;
-                Data.moveCamera = true;
-                
-            }
+            
             
             
             float t = elapsedTime - Mathf.FloorToInt(elapsedTime) / 1;
@@ -227,6 +223,13 @@ public class UI : MonoBehaviour
 
             countdownText.color = textColor;
 
+            if (countdownNumber == 0)
+            {
+                countdownText.text = "GO!!";
+                Data.moveRay = true;
+                Data.moveCamera = true;
+                GameController.self.playing = true;
+            }
             yield return null;
         }
 
@@ -234,7 +237,7 @@ public class UI : MonoBehaviour
 
         countdownText.gameObject.SetActive(false);
         maskImage.gameObject.SetActive(false);
-        GameController.self.playing = true;
+        
 
         /*GameController.self.playing = true;
         GameController.self.start = false;*/

@@ -8,12 +8,34 @@ public class createMAP : MonoBehaviour
 {
     //public GameObject StartCube;
     public static createMAP self;
-    public GameObject[] Cube; 
+    public List<GameObject> Cube = new List<GameObject>(); 
     public GameObject go;   //生成在哪個GameObject下面
     public int length;
+    public int unit_num = 3;
+    List<int> unit_mix = new List<int>();
     public int turn_num = 5;
     public GameObject ball;
 
+    List<int[]> mapunit = new List<int[]>
+    { 
+      new int[]{ 0,0,0,1,1,1,2,2,0,0,3,3,3,0,0,4,4,0,0 },
+      new int[]{ 0,0,1,1,0,0,2,2,3,3,4,4,0,0 },
+      new int[]{ 0,0,0,3,3,2,2,0,0,1,1,1,4,4,0,0 },
+      new int[]{ 0,0,3,3,3,4,4,0,0,1,1,1,0,0,2,2,0,0 }
+      
+    };
+    void MapDesign()
+    {
+        unit_mix = new List<int>();
+        for(int i=0; i < unit_num; i++)
+        {
+            int r = Random.Range(0,mapunit.Count);
+            for (int j = 0; j < mapunit[r].Length; j++)
+                unit_mix.Add(mapunit[r][j]);
+        }
+        length = unit_mix.Count;
+
+    }
     private void Awake()
     {
         if (self == null)
@@ -25,19 +47,13 @@ public class createMAP : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        length = Cube.Length;
+        
+        //length = Cube.Length;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Data.createMap)
-        {
-            Data.createMap = false;
-            Create();
-            ball.SetActive(true);
-
-        }
         if (Data.detroyMap)
         {
             Data.detroyMap = false;
@@ -46,6 +62,15 @@ public class createMAP : MonoBehaviour
             ball.SetActive(false);
 
         }
+        if (Data.createMap)
+        {
+            Data.createMap = false;
+            MapDesign();
+            Create();
+            ball.SetActive(true);
+           
+        }
+        
     }
 
     public void Create()
@@ -55,64 +80,71 @@ public class createMAP : MonoBehaviour
         float a = 0, b = 0, c = 0;
         int Case = 0;
         bool endPoint = false;
-
-
+        
+        Cube = new List<GameObject>();
         for (int i = 0; i < length; i++)
         {
             if (i == 0)
             {
                 Debug.Log(x+" "+ y +" " + z);
-                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
+                //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
+                Cube.Add(Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject);
             }
             else if (i == length - 1)
             {
-                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject;
+                //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject;
+                Cube.Add(Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject);
                 endPoint = true;
             }
-
             else if (i > 0 && i < length - 1)
             {
-                Cube[i] = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
+                Cube.Add(Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject);
+            }
 
-                int precase = Case;
-                if (i % p == 0) Case = Random.Range(0, 5);
-                switch (Case)
-                {
-                    case 0:
-                        a = 1;
-                        b = 0;
-                        c = 0;
-                        break;
-                    case 1:
-                        a = 0;
-                        b = 1;
-                        c = 0;
-                        if (precase == 3) { b = 0; a = 1; Case = 0; }
-                        break;
-                    case 2:
-                        a = 0;
-                        b = 0;
-                        c = 1;
-                        if (precase == 4) { c = 0; a = 1; Case = 0; }
-                        break;
-                    case 3:
-                        a = 0;
-                        b = -1;
-                        c = 0;
-                        if (precase == 1) { b = 0; a = 1; Case = 0; }
-                        break;
-                    case 4:
-                        a = 0;
-                        b = 0;
-                        c = -1;
-                        if (precase == 2) { c = 0; a = 1; Case = 0; }
-                        break;
 
-                }
-                //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
+            //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
+
+            int precase = Case;
+            //if (i % p == 0) Case = Random.Range(0, 5);
+            Case = unit_mix[i];
+            switch (Case)
+            {
+                case 0:
+                    a = 1;
+                    b = 0;
+                    c = 0;
+                    if (i == 0) a = 0;
+                    break;
+                case 1:
+                    a = 0;
+                    b = 1;
+                    c = 0;
+                    if (precase == 3) { b = 0; a = 1; Case = 0; }
+                    break;
+                case 2:
+                    a = 0;
+                    b = 0;
+                    c = 1;
+                    if (precase == 4) { c = 0; a = 1; Case = 0; }
+                    break;
+                case 3:
+                    a = 0;
+                    b = -1;
+                    c = 0;
+                    if (precase == 1) { b = 0; a = 1; Case = 0; }
+                    break;
+                case 4:
+                    a = 0;
+                    b = 0;
+                    c = -1;
+                    if (precase == 2) { c = 0; a = 1; Case = 0; }
+                    break;
+
+
+                    //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
             }
             Cube[i].transform.localPosition = new Vector3(x + a, y + b, z + c);
-            if (i % p == p - 1)
+           /* if (i % p == p - 1)
             {
                 for (int j = p - 1; j < i; j += p)
                 {
@@ -128,7 +160,7 @@ public class createMAP : MonoBehaviour
                         Cube[i].transform.localPosition = new Vector3(i_x, i_y, i_z);
                     }
                 }
-            }
+            }*/
             if (endPoint == true)
             {
                 endPoint = false;
@@ -146,7 +178,7 @@ public class createMAP : MonoBehaviour
     {
         for (int i = 0; i < length; i++)
         {
-            Destroy(transform.GetChild(i).gameObject);
+            Destroy(transform.GetChild(i+1).gameObject);
         }
     }
 }
