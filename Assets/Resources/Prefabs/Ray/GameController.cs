@@ -81,7 +81,7 @@ public class GameController : MonoBehaviour
         RaycastHit hit;
         Transform stoppoint;
         stoppoint = createMAP.self.transform;
-        if (playing)
+        if (/*playing*/true)
         {
             masking = (0 << 6) | (1 << 3);
             Debug.Log("step1");
@@ -92,6 +92,9 @@ public class GameController : MonoBehaviour
                 {
                     Debug.Log("HIT");
                     moveball = true;
+                    if(!playing&&!start)
+                        start = true;
+
                     Debug.Log("step3");
                 }
 
@@ -104,15 +107,7 @@ public class GameController : MonoBehaviour
             }
             
         }
-        /*void rego()
-        {
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, masking) && hit.collider.transform == stoppoint && playing)
-            {
-                moveball = true;
-                masking = (0 << 6) | (1 << 3) | (1 << 7);
-                Debug.Log("step6");
-            }
-        }*/
+
        
     }
 
@@ -134,7 +129,7 @@ public class GameController : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit hit;
-        if (start == false && playing == false && Physics.Raycast(ray, out hit))
+        /*if (start == false && playing == false && Physics.Raycast(ray, out hit))
         {
             if (hit.collider.CompareTag("START"))
             {
@@ -142,7 +137,7 @@ public class GameController : MonoBehaviour
                 start = true;
                 moveball = true;
             }
-        }
+        }*/
 
         if (Physics.Raycast(ray, out hit,Mathf.Infinity,masking))
         {
