@@ -79,10 +79,19 @@ public class createMAP : MonoBehaviour
 
     public void Create()
     {
-        float x = 0, y = 0, z = 0;
-        int p = length / turn_num;//代表多久轉一次彎，5可以換其他數字
-        float a = 0, b = 0, c = 0;
-        int Case = 0;
+        //float x = 0, y = 0, z = 0;
+        Vector3 xyz = new Vector3(0, 0, 0);
+        //int p = length / turn_num;//代表多久轉一次彎，5可以換其他數字
+        //float a = 0, b = 0, c = 0;
+        //int Case = 0;
+        List<Vector3> Vectorplus = new List<Vector3> 
+        {
+            new Vector3(1, 0, 0),
+            new Vector3(0, 1, 0), 
+            new Vector3(0, 0, 1),
+            new Vector3(0, -1, 0), 
+            new Vector3(0, 0, -1) 
+        };
         bool endPoint = false;
         
         Cube = new List<GameObject>();
@@ -90,7 +99,7 @@ public class createMAP : MonoBehaviour
         {
             if (i == 0)
             {
-                Debug.Log(x+" "+ y +" " + z);
+                //Debug.Log(x+" "+ y +" " + z);
                 //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject;
                 Cube.Add(Instantiate(Resources.Load("Prefabs/Map/StartCube"), go.transform) as GameObject);
             }
@@ -108,7 +117,7 @@ public class createMAP : MonoBehaviour
 
             //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
 
-            int precase = Case;
+        /*    int precase = Case;
             //if (i % p == 0) Case = Random.Range(0, 5);
             Case = unit_mix[i];
             switch (Case)
@@ -144,37 +153,41 @@ public class createMAP : MonoBehaviour
                     if (precase == 2) { c = 0; a = 1; Case = 0; }
                     break;
 
-
+            
                     //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
-            }
-            Cube[i].transform.localPosition = new Vector3(x + a, y + b, z + c);
-           /* if (i % p == p - 1)
-            {
-                for (int j = p - 1; j < i; j += p)
-                {
-                    if (Cube[i].transform.position == Cube[j].transform.position)
-                    {
-                        float i_1_x = Cube[i - 2].GetComponent<Transform>().localPosition.x + 1;
-                        float i_1_y = Cube[i - 2].GetComponent<Transform>().localPosition.y;
-                        float i_1_z = Cube[i - 2].GetComponent<Transform>().localPosition.z;
-                        Cube[i - 1].transform.localPosition = new Vector3(i_1_x, i_1_y, i_1_z);
-                        float i_x = Cube[i - 1].GetComponent<Transform>().localPosition.x + 1;
-                        float i_y = Cube[i - 1].GetComponent<Transform>().localPosition.y;
-                        float i_z = Cube[i - 1].GetComponent<Transform>().localPosition.z;
-                        Cube[i].transform.localPosition = new Vector3(i_x, i_y, i_z);
-                    }
-                }
             }*/
+            Cube[i].transform.localPosition = xyz;
+            if (i > 0)
+                Cube[i].transform.localPosition += Vectorplus[unit_mix[i]];
+            xyz = Cube[i].GetComponent<Transform>().localPosition;
+
+            /* if (i % p == p - 1)
+             {
+                 for (int j = p - 1; j < i; j += p)
+                 {
+                     if (Cube[i].transform.position == Cube[j].transform.position)
+                     {
+                         float i_1_x = Cube[i - 2].GetComponent<Transform>().localPosition.x + 1;
+                         float i_1_y = Cube[i - 2].GetComponent<Transform>().localPosition.y;
+                         float i_1_z = Cube[i - 2].GetComponent<Transform>().localPosition.z;
+                         Cube[i - 1].transform.localPosition = new Vector3(i_1_x, i_1_y, i_1_z);
+                         float i_x = Cube[i - 1].GetComponent<Transform>().localPosition.x + 1;
+                         float i_y = Cube[i - 1].GetComponent<Transform>().localPosition.y;
+                         float i_z = Cube[i - 1].GetComponent<Transform>().localPosition.z;
+                         Cube[i].transform.localPosition = new Vector3(i_x, i_y, i_z);
+                     }
+                 }
+             }*/
             if (endPoint == true)
             {
                 endPoint = false;
                 Data.endPoint = Cube[i].transform.position;
             }
 
-            x = Cube[i].GetComponent<Transform>().localPosition.x;
+            /*x = Cube[i].GetComponent<Transform>().localPosition.x;
             y = Cube[i].GetComponent<Transform>().localPosition.y;
             z = Cube[i].GetComponent<Transform>().localPosition.z;
-            Debug.Log(x + " " + y + " " + z);
+            Debug.Log(x + " " + y + " " + z);*/
         }
     }
 

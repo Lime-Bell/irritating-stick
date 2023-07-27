@@ -76,12 +76,12 @@ public class GameController : MonoBehaviour
 
             lineRenderer.enabled = false;
         }
-        Vector3 mousePosition = Input.mousePosition;
+      /*  Vector3 mousePosition = Input.mousePosition;
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit hit;
         Transform stoppoint;
         stoppoint = createMAP.self.transform;
-        if (/*playing*/true)
+        if (true)
         {
             masking = (0 << 6) | (1 << 3);
             Debug.Log("step1");
@@ -107,7 +107,7 @@ public class GameController : MonoBehaviour
             }
             
         }
-
+        */
        
     }
 
@@ -138,7 +138,30 @@ public class GameController : MonoBehaviour
                 moveball = true;
             }
         }*/
+        masking = (0 << 6) | (1 << 3);
+        Debug.Log("step1");
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, masking))
+        {
+            Debug.Log("step2");
+            if (hit.collider.CompareTag("BALL"))
+            {
+                Debug.Log("HIT");
+                moveball = true;
+                if (!playing && !start)
+                    start = true;
 
+                Debug.Log("step3");
+            }
+
+
+        }
+        else
+         {
+            moveball = false;
+            masking = (1 << 6) | (1 << 3);
+         }
+
+     
         if (Physics.Raycast(ray, out hit,Mathf.Infinity,masking))
         {
             lineRenderer.SetPosition(0, rayOriginPosition);
