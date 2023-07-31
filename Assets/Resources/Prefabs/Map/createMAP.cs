@@ -72,7 +72,8 @@ public class createMAP : MonoBehaviour
             MapDesign();
             Create();
             ball.SetActive(true);
-           
+            ball.transform.eulerAngles = Cube[0].gameObject.transform.eulerAngles;
+
         }
         
     }
@@ -92,6 +93,14 @@ public class createMAP : MonoBehaviour
             new Vector3(0, -1, 0), 
             new Vector3(0, 0, -1) 
         };
+        List<Vector3> Angle = new List<Vector3>
+        {
+            new Vector3(0, 0, 90),
+            new Vector3(0, 0, 180),
+            new Vector3(-90, 0, 0),
+            new Vector3(0, 0, 0),
+            new Vector3(90, 0, 0)
+        };
         bool endPoint = false;
         
         Cube = new List<GameObject>();
@@ -109,56 +118,61 @@ public class createMAP : MonoBehaviour
                 Cube.Add(Instantiate(Resources.Load("Prefabs/Map/GoalCube"), go.transform) as GameObject);
                 endPoint = true;
             }
-            else if (i > 0 && i < length - 1)
+            else if (i > 0 && i < length - 1 && unit_mix[i + 1] == unit_mix[i])
             {
                 Cube.Add(Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject);
             }
-
+            else if (i < length - 1 && unit_mix[i + 1] != unit_mix[i]) 
+            {
+                Cube.Add(Instantiate(Resources.Load("Prefabs/Map/TURN"), go.transform) as GameObject);
+            }
 
             //Cube[i] = Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject;//"Prefabs/Cube"要改成你軌道方塊的Prefab的路徑
 
-        /*    int precase = Case;
-            //if (i % p == 0) Case = Random.Range(0, 5);
-            Case = unit_mix[i];
-            switch (Case)
-            {
-                case 0:
-                    a = 1;
-                    b = 0;
-                    c = 0;
-                    if (i == 0) a = 0;
-                    break;
-                case 1:
-                    a = 0;
-                    b = 1;
-                    c = 0;
-                    if (precase == 3) { b = 0; a = 1; Case = 0; }
-                    break;
-                case 2:
-                    a = 0;
-                    b = 0;
-                    c = 1;
-                    if (precase == 4) { c = 0; a = 1; Case = 0; }
-                    break;
-                case 3:
-                    a = 0;
-                    b = -1;
-                    c = 0;
-                    if (precase == 1) { b = 0; a = 1; Case = 0; }
-                    break;
-                case 4:
-                    a = 0;
-                    b = 0;
-                    c = -1;
-                    if (precase == 2) { c = 0; a = 1; Case = 0; }
-                    break;
+            /*    int precase = Case;
+                //if (i % p == 0) Case = Random.Range(0, 5);
+                Case = unit_mix[i];
+                switch (Case)
+                {
+                    case 0:
+                        a = 1;
+                        b = 0;
+                        c = 0;
+                        if (i == 0) a = 0;
+                        break;
+                    case 1:
+                        a = 0;
+                        b = 1;
+                        c = 0;
+                        if (precase == 3) { b = 0; a = 1; Case = 0; }
+                        break;
+                    case 2:
+                        a = 0;
+                        b = 0;
+                        c = 1;
+                        if (precase == 4) { c = 0; a = 1; Case = 0; }
+                        break;
+                    case 3:
+                        a = 0;
+                        b = -1;
+                        c = 0;
+                        if (precase == 1) { b = 0; a = 1; Case = 0; }
+                        break;
+                    case 4:
+                        a = 0;
+                        b = 0;
+                        c = -1;
+                        if (precase == 2) { c = 0; a = 1; Case = 0; }
+                        break;
 
-            
-                    //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
-            }*/
+
+                        //Cube[i].transform.position = new Vector3(x + a, y + b, z + c);
+                }*/
             Cube[i].transform.localPosition = xyz;
-            if (i > 0)
+            if (i > 0) {
                 Cube[i].transform.localPosition += Vectorplus[unit_mix[i]];
+                Cube[i].transform.eulerAngles = Angle[unit_mix[i]];
+            }
             xyz = Cube[i].GetComponent<Transform>().localPosition;
 
             /* if (i % p == p - 1)
