@@ -20,7 +20,7 @@ public class UI : MonoBehaviour
 
     public Text endGameText;
     public Text gameClearText;
-
+    static public bool UIopen = true;
 
 
     private void Start()
@@ -52,21 +52,22 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        if (UIopen)
+        {
+            GameController.self.playing = false;
+            GameController.self.ball.SetActive(false);
+        }
        if (GameController.self.start)
         {
+            
             countdownText.gameObject.SetActive(true);
             StartCoroutine(ReadyCountdown());
             GameController.self.startfall = false;
+            GameController.self.start = false;
         }
         if (Data.showEndGame)
         {
-            endGameText.text = Data.showEndText;
-
-            retryButton.gameObject.SetActive(true);
-            nextButton.gameObject.SetActive(true);
-            exitButton.gameObject.SetActive(true);
-
-            endGameText.gameObject.SetActive(true);
+            openUI();
             StartCoroutine(GameOverLerp());
         }
 
@@ -82,13 +83,14 @@ public class UI : MonoBehaviour
         Data.moveRay = true;
         Data.moveCamera = true;
 
-        closeUI();
-
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
+        GameController.self.playing = false;
+       
+        Debug.Log("now PLAYING  " + GameController.self.playing);
+        closeUI();
 
 
-        
         //StartCoroutine(ReadyCountdown());
     }
 
@@ -103,12 +105,12 @@ public class UI : MonoBehaviour
         Data.createMap = true;
         Data.resetCamera = true;
 
-        closeUI();
-
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
+        GameController.self.playing = false;
+        
+        closeUI();
 
-       
         //StartCoroutine(ReadyCountdown());
 
     }
@@ -118,10 +120,10 @@ public class UI : MonoBehaviour
         Data.resetCamera = true;
         Data.detroyMap = true;
 
-        closeUI();
-
         startButton.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
+        GameController.self.playing = false;
+        closeUI();
     }
 
     
@@ -132,8 +134,9 @@ public class UI : MonoBehaviour
         Data.moveCamera = true;
 
         startButton.gameObject.SetActive(false);
+        closeUI();
         //countdownText.gameObject.SetActive(true);
-        
+
         //StartCoroutine(ReadyCountdown());
         //SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
     }
@@ -144,8 +147,20 @@ public class UI : MonoBehaviour
         retryButton.gameObject.SetActive(false);
         nextButton.gameObject.SetActive(false);
         exitButton.gameObject.SetActive(false);
+        UIopen = false;
+        GameController.self.ball.SetActive(true);
     }
+    private void openUI()
+    {
+        UIopen = true;
+        endGameText.text = Data.showEndText;
 
+        retryButton.gameObject.SetActive(true);
+        nextButton.gameObject.SetActive(true);
+        exitButton.gameObject.SetActive(true);
+
+        endGameText.gameObject.SetActive(true);
+    }
     private IEnumerator GameOverLerp()
     {
         
@@ -170,6 +185,7 @@ public class UI : MonoBehaviour
 
             yield return null;
         }
+        
     }
 
     private IEnumerator ReadyCountdown()
@@ -229,6 +245,10 @@ public class UI : MonoBehaviour
                 Data.moveRay = true;
                 Data.moveCamera = true;
                 GameController.self.playing = true;
+                GameController.self.start = false;
+                Debug.Log("if openui"+ UIopen);
+                if(UIopen)
+                   GameController.self.startfall = true;
             }
             yield return null;
         }

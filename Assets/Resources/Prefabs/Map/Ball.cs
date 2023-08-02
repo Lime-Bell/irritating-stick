@@ -27,6 +27,7 @@ public class Ball : MonoBehaviour
             nowon = 0;
             test = 0;
             ball.transform.eulerAngles = go.transform.GetChild(1).gameObject.transform.eulerAngles;
+            
         }
         if (GameController.self.playing)
         {
@@ -49,8 +50,7 @@ public class Ball : MonoBehaviour
         GameObject nextCube = go.transform.GetChild(nowon + 1).gameObject;
         ball.transform.DOMove(nextCube.transform.position, speed).SetEase(Ease.Linear);
         ball.transform.DORotate(nextCube.transform.eulerAngles, speed);
-        Debug.Log(test);
-
+        
     }
     void nowup()
     {

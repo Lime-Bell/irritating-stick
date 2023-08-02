@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     public GameObject startObject;
     public GameObject trackObject;
     public GameObject goalObject;
+    public GameObject ball;
 
     public Text gameOverText;
     public RawImage mask;
@@ -33,7 +34,8 @@ public class GameController : MonoBehaviour
     public bool startfall = false;
     public bool moveball=false;
     LayerMask masking = (1 << 3) | (1 << 6) ;
-
+    bool moto = false;
+    
 
     private void Awake()
     {
@@ -62,7 +64,7 @@ public class GameController : MonoBehaviour
         if(start == true)
         {
             StartGame();
-            start = false;
+           
         }
         if (Data.moveRay)
         {
@@ -76,39 +78,10 @@ public class GameController : MonoBehaviour
 
             lineRenderer.enabled = false;
         }
-      /*  Vector3 mousePosition = Input.mousePosition;
-        Ray ray = mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit hit;
-        Transform stoppoint;
-        stoppoint = createMAP.self.transform;
-        if (true)
-        {
-            masking = (0 << 6) | (1 << 3);
-            Debug.Log("step1");
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, masking))
-            {
-                Debug.Log("step2");
-                if (hit.collider.CompareTag("BALL"))
-                {
-                    Debug.Log("HIT");
-                    moveball = true;
-                    if(!playing&&!start)
-                        start = true;
-
-                    Debug.Log("step3");
-                }
-
-
-            }
-            else
-            {
-                moveball = false;
-                masking = (1 << 6) | (1 << 3);
-            }
-            
-        }
-        */
-       
+        
+        if(playing!=moto)
+            Debug.Log("¹CÀ¸¤¤" + playing);
+        moto = playing;
     }
 
     private void StartGame()
@@ -129,28 +102,24 @@ public class GameController : MonoBehaviour
 
         Ray ray = mainCamera.ScreenPointToRay(mousePosition);
         RaycastHit hit;
-        /*if (start == false && playing == false && Physics.Raycast(ray, out hit))
-        {
-            if (hit.collider.CompareTag("START"))
-            {
-                //playing = true;
-                start = true;
-                moveball = true;
-            }
-        }*/
+        
         masking = (0 << 6) | (1 << 3);
-        Debug.Log("step1");
+        
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, masking))
         {
-            Debug.Log("step2");
+            
             if (hit.collider.CompareTag("BALL"))
             {
                 Debug.Log("HIT");
                 moveball = true;
-                if (!playing && !start)
+                if (!playing & !start & !UI.UIopen)
+                {
                     start = true;
+                    
+                }
+                    
 
-                Debug.Log("step3");
+                
             }
 
 
@@ -216,7 +185,7 @@ public class GameController : MonoBehaviour
                 edgeTime = 0;
                 Debug.Log("GameOver");
                 GameOver();
-                playing = false;
+               
             }
             else if (!touchEdge)
             {
@@ -249,6 +218,9 @@ public class GameController : MonoBehaviour
             Data.moveCamera = false;
             Data.showEndText = "GameOver";
             playing = false;
+            moveball = false;
+            startfall = true;
+            
     }
 
     private void GameClear()
@@ -258,5 +230,7 @@ public class GameController : MonoBehaviour
         Data.moveCamera = false;
         Data.showEndText = "GameClear";
         playing = false;
+        moveball = false;
+        startfall = true;
     }
 }
