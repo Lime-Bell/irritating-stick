@@ -15,6 +15,9 @@ public class createMAP : MonoBehaviour
     List<int> unit_mix = new List<int>();
     public int turn_num = 5;
     public GameObject ball;
+    public int a =60;
+    float s,c;
+
 
     List<int[]> mapunit = new List<int[]>
     { 
@@ -37,7 +40,7 @@ public class createMAP : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
         
     }
 
@@ -58,7 +61,7 @@ public class createMAP : MonoBehaviour
             MapDesign();
             Create();
             ball.SetActive(true);
-            ball.transform.eulerAngles = Cube[0].gameObject.transform.eulerAngles;
+            ball.transform.localEulerAngles = Cube[0].gameObject.transform.localEulerAngles;
 
         }
         
@@ -79,22 +82,24 @@ public class createMAP : MonoBehaviour
     public void Create()
     {
         Vector3 xyz = new Vector3(0, 0, 0);
-        
+        s = Mathf.Sin(a * Mathf.Deg2Rad);
+        c = Mathf.Cos(a * Mathf.Deg2Rad);
+
         List<Vector3> Vectorplus = new List<Vector3> 
         {
             new Vector3(1, 0, 0),
             new Vector3(0, 1, 0), 
-            new Vector3(0, 0, 1),
+            new Vector3(s ,0,c),
             new Vector3(0, -1, 0), 
-            new Vector3(0, 0, -1) 
+            new Vector3(s, 0, -c) 
         };
         List<Vector3> Angle = new List<Vector3>
         {
             new Vector3(0, 0, 90),
             new Vector3(0, 0, 180),
-            new Vector3(-90, 0, 0),
+            new Vector3(-90,0,a),
             new Vector3(0, 0, 0),
-            new Vector3(90, 0, 0)
+            new Vector3(90, 0, a)
         };
         bool endPoint = false;
         
@@ -125,7 +130,7 @@ public class createMAP : MonoBehaviour
             Cube[i].transform.localPosition = xyz;
             if (i > 0) {
                 Cube[i].transform.localPosition += Vectorplus[unit_mix[i]];
-                Cube[i].transform.eulerAngles = Angle[unit_mix[i]];
+                Cube[i].transform.localEulerAngles = Angle[unit_mix[i]];
             }
             xyz = Cube[i].GetComponent<Transform>().localPosition;
 
