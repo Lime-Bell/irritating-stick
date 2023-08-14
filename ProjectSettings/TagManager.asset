@@ -8,6 +8,8 @@ TagManager:
   - START
   - BALL
   - WALL
+  - SPEEDUP
+  - SPEEDDOWN
   layers:
   - Default
   - TransparentFX

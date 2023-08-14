@@ -220,7 +220,8 @@ public class GameController : MonoBehaviour
             playing = false;
             moveball = false;
             startfall = true;
-            
+            Audio.self.PlaySound("over");
+
     }
 
     private void GameClear()
@@ -232,5 +233,6 @@ public class GameController : MonoBehaviour
         playing = false;
         moveball = false;
         startfall = true;
+        Audio.self.PlaySound("clear");
     }
 }

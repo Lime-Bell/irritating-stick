@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 
 public class UI : MonoBehaviour
@@ -21,18 +22,31 @@ public class UI : MonoBehaviour
     public Text endGameText;
     public Text gameClearText;
     static public bool UIopen = true;
-
-
+    public Action OnCountChanged;
+    private bool count=true;
+    /*public int Count
+    {
+        set
+        {
+            count = value;
+            if (OnCountChanged != null)
+            {
+                OnCountChanged();
+            }
+        }
+        get { return count; }
+    }
+    */
     private void Start()
-    { 
-
+    {
+        
         countdownText.gameObject.SetActive(false);
         endGameText.gameObject.SetActive(false);
 
         countdownText.color = new Color(1f, 0.84f, 0f, 0f); // ª÷¦â
         endGameText.color = new Color(1f, 0.84f, 0f, 0f);
 
-
+        //OnCountChanged += playsound;
         //maskImage.color = Color.black;
 
 
@@ -61,9 +75,22 @@ public class UI : MonoBehaviour
         {
             
             countdownText.gameObject.SetActive(true);
+            if (count)
+            {
+                Audio.self.PlaySound("count");
+                Debug.Log("SOUND");
+                count = false;
+            }
+           
+         
+            
             StartCoroutine(ReadyCountdown());
             GameController.self.startfall = false;
             GameController.self.start = false;
+        }
+        if (GameController.self.startfall)
+        {
+            Audio.self.PauseSound("count");
         }
         if (Data.showEndGame)
         {
@@ -86,8 +113,8 @@ public class UI : MonoBehaviour
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
         GameController.self.playing = false;
-       
-        Debug.Log("now PLAYING  " + GameController.self.playing);
+        Audio.self.PlaySound("click");
+        
         closeUI();
 
 
@@ -108,7 +135,7 @@ public class UI : MonoBehaviour
         countdownText.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
         GameController.self.playing = false;
-        
+        Audio.self.PlaySound("click");
         closeUI();
 
         //StartCoroutine(ReadyCountdown());
@@ -123,6 +150,7 @@ public class UI : MonoBehaviour
         startButton.gameObject.SetActive(true);
         endGameText.gameObject.SetActive(false);
         GameController.self.playing = false;
+        Audio.self.PlaySound("click");
         closeUI();
     }
 
@@ -134,6 +162,7 @@ public class UI : MonoBehaviour
         Data.moveCamera = true;
 
         startButton.gameObject.SetActive(false);
+        Audio.self.PlaySound("click");
         closeUI();
         //countdownText.gameObject.SetActive(true);
 
@@ -152,6 +181,7 @@ public class UI : MonoBehaviour
     }
     private void openUI()
     {
+       
         UIopen = true;
         endGameText.text = Data.showEndText;
 
@@ -187,7 +217,7 @@ public class UI : MonoBehaviour
         }
         
     }
-
+    
     private IEnumerator ReadyCountdown()
     {
         float duration = 4f;
@@ -208,7 +238,9 @@ public class UI : MonoBehaviour
             {
                 countdownText.gameObject.SetActive(false);
                 elapsedTime =0f;
-                
+                count = true;
+                //Audio.self.PauseSound("count");
+
             }
             else
             {
@@ -229,6 +261,8 @@ public class UI : MonoBehaviour
             if (group == 0 || group == 1)
             {
                 currentAlpha = Mathf.Lerp(startAlpha, midAlpha, Mathf.SmoothStep(0f, 1f, t));
+               
+
             }
             else
             {
@@ -242,17 +276,23 @@ public class UI : MonoBehaviour
             if (countdownNumber == 0)
             {
                 countdownText.text = "GO!!";
-                Data.moveRay = true;
-                Data.moveCamera = true;
+                
                 GameController.self.playing = true;
                 GameController.self.start = false;
-                Debug.Log("if openui"+ UIopen);
-                if(UIopen)
+                
+
+                if (UIopen)
                    GameController.self.startfall = true;
             }
+            
+            
+                
+            
+            
             yield return null;
         }
 
+        
         Debug.Log("Finish");
 
         countdownText.gameObject.SetActive(false);
@@ -264,4 +304,9 @@ public class UI : MonoBehaviour
 
 
     }
+   /* void playsound()
+    {
+        Audio.self.PlaySound("count");
+        Debug.Log("SOUND");
+    }*/
 }
