@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
     int nowon = 0;//現在在哪個方塊
     bool stop = false;
     int test = 0;
-    float speed = 1;
+    float speed = 1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -57,12 +57,22 @@ public class Ball : MonoBehaviour
         nowon++;
     }
 
-    void stoping()
+
+    void OnTriggerEnter(Collider col)
     {
-        stop = true;
-    }
-    void going()
-    {
-        stop = false;
+        if (col.CompareTag("SPEEDDOWN"))
+        {
+            speed *= 1.2f;
+            col.gameObject.SetActive(false);
+            Audio.self.PlaySound("speeddown");
+        }
+        if (col.CompareTag("SPEEDUP"))
+        {
+            speed *= 0.8f;
+            col.gameObject.SetActive(false);
+            Audio.self.PlaySound("speedup");
+        }
+
+            Debug.Log("alive");
     }
 }

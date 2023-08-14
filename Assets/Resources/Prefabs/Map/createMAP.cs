@@ -8,8 +8,9 @@ public class createMAP : MonoBehaviour
 {
     //public GameObject StartCube;
     public static createMAP self;
-    public List<GameObject> Cube = new List<GameObject>(); 
-    public GameObject go;   //生成在哪個GameObject下面
+    public List<GameObject> Cube = new List<GameObject>();
+    public List<GameObject> Stars = new List<GameObject>();
+    public GameObject go,starmap;   //生成在哪個GameObject下面
     public int length;
     public int unit_num = 3;
     List<int> unit_mix = new List<int>();
@@ -104,6 +105,7 @@ public class createMAP : MonoBehaviour
         bool endPoint = false;
         
         Cube = new List<GameObject>();
+        
         for (int i = 0; i < length; i++)
         {
             if (i == 0)
@@ -133,14 +135,26 @@ public class createMAP : MonoBehaviour
                 Cube[i].transform.localEulerAngles = Angle[unit_mix[i]];
             }
             xyz = Cube[i].GetComponent<Transform>().localPosition;
-
             
+
             if (endPoint == true)
             {
                 endPoint = false;
                 Data.endPoint = Cube[i].transform.position;
             }
 
+        }
+        starmap.transform.position = go.transform.position;
+        starmap.transform.eulerAngles = go.transform.eulerAngles;
+        for (int i = 1; i <length/10; i++)
+        {
+            string star = Random.Range(0, 2) == 0 ? "Prefabs/Map/speedup" :"Prefabs/Map/speeddown";
+            if (i * 10 < length - 2)
+            {
+                Stars.Add(Instantiate(Resources.Load(star), starmap.transform) as GameObject);
+                Stars[i - 1].transform.position = Cube[i * 10].transform.position;
+            }
+               
         }
     }
 
