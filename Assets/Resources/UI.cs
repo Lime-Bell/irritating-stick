@@ -101,7 +101,15 @@ public class UI : MonoBehaviour
 
         
     }
+    private void ResetStar()
+    {
+        for (int i = 0; i < createMAP.self.Stars.Count; i++)
+        {
+            createMAP.self.Stars[i].gameObject.SetActive(true);
+            Debug.Log("resetstar");
 
+        }
+    }
     public void RetryButton()
     {
         //Data.showNextButton = false;
@@ -114,7 +122,9 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
         GameController.self.playing = false;
         Audio.self.PlaySound("click");
-        
+        ResetStar();
+        GameController.self.ball.SetActive(true);
+
         closeUI();
 
 
@@ -136,6 +146,7 @@ public class UI : MonoBehaviour
         endGameText.gameObject.SetActive(false);
         GameController.self.playing = false;
         Audio.self.PlaySound("click");
+        GameController.self.ball.SetActive(true);
         closeUI();
 
         //StartCoroutine(ReadyCountdown());

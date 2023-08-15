@@ -11,6 +11,7 @@ public class Ball : MonoBehaviour
     bool stop = false;
     int test = 0;
     float speed = 1f;
+    int target=0;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,18 +28,21 @@ public class Ball : MonoBehaviour
             nowon = 0;
             test = 0;
             ball.transform.eulerAngles = go.transform.GetChild(1).gameObject.transform.eulerAngles;
-            
+            speed = 1f;
         }
         if (GameController.self.playing)
         {
-            if (test < nowon + 1 && test < createMAP.self.length && GameController.self.moveball)
+            if (test < nowon+1  && test < createMAP.self.length && GameController.self.moveball)
             {
+                target = nowon + 1;
                 goahead();
                 test++;
                 Invoke("nowup", speed);
             }
             else if(!GameController.self.moveball)
             {
+               // target = nowon;
+               // DOTween.Pause(transform);
                 Debug.Log("STOP BALL MOVE");
             }
         }
@@ -47,14 +51,15 @@ public class Ball : MonoBehaviour
 
     void goahead()
     {
-        GameObject nextCube = go.transform.GetChild(nowon + 1).gameObject;
+        GameObject nextCube = go.transform.GetChild(target).gameObject;
         ball.transform.DOMove(nextCube.transform.position, speed).SetEase(Ease.Linear);
-        ball.transform.DORotate(nextCube.transform.eulerAngles, speed);
+        ball.transform.DORotate(nextCube.transform.eulerAngles, 0.3f);
         
     }
     void nowup()
     {
         nowon++;
+        target++;
     }
 
 
@@ -62,7 +67,8 @@ public class Ball : MonoBehaviour
     {
         if (col.CompareTag("SPEEDDOWN"))
         {
-            speed *= 1.2f;
+            if(speed<1.8f)
+                speed *= 1.2f;
             col.gameObject.SetActive(false);
             Audio.self.PlaySound("speeddown");
         }
@@ -72,7 +78,23 @@ public class Ball : MonoBehaviour
             col.gameObject.SetActive(false);
             Audio.self.PlaySound("speedup");
         }
+        if (col.CompareTag("MAP"))
+        {
+            GameController.self.outside = false;
+      
+        }
+       /* if (col.CompareTag("SPECIAL"))
+        {
+            GameController.self.inmap = false;
+        }*/
 
             Debug.Log("alive");
     }
+   /* private void OnTriggerStay(Collider col)
+    {
+        if (col.CompareTag("MAP"))
+        {
+            GameController.self.inmap = true;
+        }
+    }*/
 }

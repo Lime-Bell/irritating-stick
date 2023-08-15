@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour
     private float edgeTime = 0;
     private float endTime = 0;
     private bool touchEdge = false;
+    public bool outside = false;
+    
     //private MeshCollider meshCollider;
 
     private Camera mainCamera;
@@ -27,14 +29,14 @@ public class GameController : MonoBehaviour
     private float distanceThreshold = 0.2f;
 
     private bool lose = false;
-    private bool inmap = true;
+    //public bool inmap = true;
     public bool start = false;
     public bool playing = false;
     public static GameController self;
     public bool startfall = false;
     public bool moveball=false;
     LayerMask masking = (1 << 3) | (1 << 6) ;
-    bool moto = false;
+    
     
 
     private void Awake()
@@ -78,10 +80,11 @@ public class GameController : MonoBehaviour
 
             lineRenderer.enabled = false;
         }
+        if (outside)
+        {
+            Invoke("OutSide", 0.1f);
+        }
         
-        if(playing!=moto)
-            Debug.Log("遊戲中" + playing);
-        moto = playing;
     }
 
     private void StartGame()
@@ -89,9 +92,11 @@ public class GameController : MonoBehaviour
         lineRenderer.SetPosition(0, new Vector3(mainCamera.transform.position.x, mainCamera.transform.position.y - 2, mainCamera.transform.position.z));
         lineRenderer.SetPosition(1, startObject.transform.position);
         lineRenderer.enabled = true;
+        outside = false;
         masking = (1 << 3) | (0 << 6);
+        
     }
-
+    
 
     
     // 根據滑鼠位置更新射線的位置
@@ -210,6 +215,13 @@ public class GameController : MonoBehaviour
         //Debug.Log("超出邊界 " + edgeTime + " 秒!");
 
     }
+    private void OutSide()
+    {
+        if (outside/*&&!inmap*/)
+        {
+            GameOver();
+        }
+    }
 
     private void GameOver()
     {
@@ -221,6 +233,7 @@ public class GameController : MonoBehaviour
             moveball = false;
             startfall = true;
             Audio.self.PlaySound("over");
+            outside = false;
 
     }
 

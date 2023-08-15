@@ -65,7 +65,9 @@ public class createMAP : MonoBehaviour
             ball.transform.localEulerAngles = Cube[0].gameObject.transform.localEulerAngles;
 
         }
-        
+       
+
+
     }
 
     void MapDesign()
@@ -121,7 +123,8 @@ public class createMAP : MonoBehaviour
             }
             else if (i > 0 && i < length - 1 && unit_mix[i + 1] == unit_mix[i])
             {
-                Cube.Add(Instantiate(Resources.Load("Prefabs/Map/TrackCube"), go.transform) as GameObject);
+                string track = Random.Range(0, 10) >1||i<3 ? "Prefabs/Map/TrackCube" : "Prefabs/Map/MovingCubes";
+                Cube.Add(Instantiate(Resources.Load(track), go.transform) as GameObject);
             }
             else if (i < length - 1 && unit_mix[i + 1] != unit_mix[i]) 
             {
@@ -151,12 +154,16 @@ public class createMAP : MonoBehaviour
             string star = Random.Range(0, 2) == 0 ? "Prefabs/Map/speedup" :"Prefabs/Map/speeddown";
             if (i * 10 < length - 2)
             {
-                Stars.Add(Instantiate(Resources.Load(star), starmap.transform) as GameObject);
-                Stars[i - 1].transform.position = Cube[i * 10].transform.position;
+                Stars.Add(Instantiate(Resources.Load(star), Cube[i * 10].transform.GetChild(0).transform) as GameObject);
+                //Stars[i - 1].transform.eulerAngles = new Vector3(-90,0,0);
+                Stars[i - 1].transform.localScale = new Vector3(0.3f / Cube[i * 10].transform.localScale.x, 0.3f / Cube[i * 10].transform.localScale.y, 0.3f / Cube[i * 10].transform.localScale.z) ;
+                // Stars[i - 1].transform.position = Cube[i * 10].transform.position;
+                
             }
                
         }
     }
+    
 
     public void DestroyMAP()
     {

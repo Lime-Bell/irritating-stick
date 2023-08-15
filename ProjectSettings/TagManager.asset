@@ -10,6 +10,7 @@ TagManager:
   - WALL
   - SPEEDUP
   - SPEEDDOWN
+  - SPECIAL
   layers:
   - Default
   - TransparentFX
