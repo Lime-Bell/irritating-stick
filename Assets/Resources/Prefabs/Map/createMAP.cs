@@ -107,6 +107,7 @@ public class createMAP : MonoBehaviour
         bool endPoint = false;
         
         Cube = new List<GameObject>();
+        bool afterspecial = false;
         
         for (int i = 0; i < length; i++)
         {
@@ -123,7 +124,9 @@ public class createMAP : MonoBehaviour
             }
             else if (i > 0 && i < length - 1 && unit_mix[i + 1] == unit_mix[i])
             {
-                string track = Random.Range(0, 10) >1||i<3 ? "Prefabs/Map/TrackCube" : "Prefabs/Map/MovingCubes";
+                string track = (Random.Range(0, 10) >1||i<3||afterspecial) ? "Prefabs/Map/TrackCube" : "Prefabs/Map/MovingCubes";
+                if (track == "Prefabs/Map/MovingCubes") afterspecial = true;
+                else afterspecial = false;
                 Cube.Add(Instantiate(Resources.Load(track), go.transform) as GameObject);
             }
             else if (i < length - 1 && unit_mix[i + 1] != unit_mix[i]) 
@@ -147,16 +150,18 @@ public class createMAP : MonoBehaviour
             }
 
         }
-        starmap.transform.position = go.transform.position;
-        starmap.transform.eulerAngles = go.transform.eulerAngles;
-        for (int i = 1; i <length/10; i++)
+        //starmap.transform.position = go.transform.position;
+        //starmap.transform.eulerAngles = go.transform.eulerAngles;
+        Stars = new List<GameObject>();
+        for (int i = 1; i <= length/10-1; i++)
         {
             string star = Random.Range(0, 2) == 0 ? "Prefabs/Map/speedup" :"Prefabs/Map/speeddown";
             if (i * 10 < length - 2)
             {
                 Stars.Add(Instantiate(Resources.Load(star), Cube[i * 10].transform.GetChild(0).transform) as GameObject);
                 //Stars[i - 1].transform.eulerAngles = new Vector3(-90,0,0);
-                Stars[i - 1].transform.localScale = new Vector3(0.3f / Cube[i * 10].transform.localScale.x, 0.3f / Cube[i * 10].transform.localScale.y, 0.3f / Cube[i * 10].transform.localScale.z) ;
+                Stars[i - 1].transform.localScale = new Vector3(0.3f / Cube[i * 10].transform.localScale.x, 0.3f / Cube[i * 10].transform.localScale.y, 0.3f / Cube[i * 10].transform.localScale.z);
+                Debug.Log("Star"+i);
                 // Stars[i - 1].transform.position = Cube[i * 10].transform.position;
                 
             }

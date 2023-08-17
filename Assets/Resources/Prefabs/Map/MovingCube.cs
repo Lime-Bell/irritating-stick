@@ -6,10 +6,21 @@ using DG.Tweening;
 public class MovingCube : MonoBehaviour
 {
     bool disappear = false;
+    
     // Start is called before the first frame update
     void Start()
     {
-        
+        if (transform.localEulerAngles == new Vector3(0, 0, 90)) 
+            transform.GetChild(1).transform.localPosition = new Vector3(-0.5f, 0, 0);
+        else if (transform.localEulerAngles == new Vector3(0, 0, 180)) 
+            transform.GetChild(1).transform.localPosition = new Vector3(0, 0.5f, 0);
+        else if (transform.localEulerAngles.x == 270)  
+            transform.GetChild(1).transform.localPosition = new Vector3(0, 0, -0.5f);
+        else if (transform.localEulerAngles == new Vector3(0, 0, 0)) 
+            transform.GetChild(1).transform.localPosition = new Vector3(0, -0.5f, 0);
+        else if (transform.localEulerAngles.x == 90) 
+            transform.GetChild(1).transform.localPosition = new Vector3(0, 0, 0.5f);
+        transform.GetChild(1).transform.eulerAngles -= transform.eulerAngles;
     }
 
     // Update is called once per frame
