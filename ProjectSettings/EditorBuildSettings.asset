@@ -8,4 +8,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects: {}
+  m_configObjects:
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 5a83be6c3a1729e4cacca6e6c426fd68, type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 166fa38952ce4ad44aa6645c22abbe46, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: f5bdc6d00649f5f44942c1a3bdfad9e6, type: 2}
+    xr.sdk.mock-hmd.settings: {fileID: 11400000, guid: 25362b7f15ae51b41911ada3a54008c2, type: 2}
